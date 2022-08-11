@@ -61,9 +61,9 @@ def main():
 # Drain all ETH funds from the user's contract. Doing it in a single transaction is a big plus ;) 
 # #########################################################
 
-    #############################
-    ##### SOLUTION GOES HERE ####
-    #############################
+    ##############################
+    ##### SOLUTION GOES HERE #####
+    ##############################
 
     # deploy attacker contract which calls `flashLoan` to the receiver 10 times in a loop
     attacker_contract = NaiveReceiverAttack.deploy(receiver.address, pool.address, _fromAttacker)

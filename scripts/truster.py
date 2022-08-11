@@ -54,9 +54,9 @@ def main():
 # But don't worry, you might be able to take them all from the pool. In a single transaction.
 # #########################################################
 
-    #############################
-    ##### SOLUTION GOES HERE ####
-    #############################
+    ##############################
+    ##### SOLUTION GOES HERE #####
+    ##############################
 
     # Encode a call to the DVT contract approving the attacker to take all the tokens from the pool
     attack_call = token.approve.encode_input(attacker.address, TOKENS_IN_POOL)
