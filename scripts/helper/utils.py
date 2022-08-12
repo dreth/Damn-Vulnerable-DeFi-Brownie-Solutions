@@ -1,8 +1,16 @@
-from scripts.helper.web3 import web3
 from decimal import Decimal
+from email.policy import default
 from brownie import accounts, chain, Contract, ZERO_ADDRESS, project, config, network
 import json
 from pathlib import Path
+
+# import web3 if necessary
+def import_web3():
+    from web3 import Web3
+    if network.show_active() == 'anvil':
+        return Web3(Web3.HTTPProvider(f"http://127.0.0.1:8545"))
+    else:
+        return Web3(Web3.HTTPProvider(f"http://localhost:8545"))
 
 # redefine _from and acc for local use
 def define_from_acc(start=0, qty=10):
@@ -19,10 +27,8 @@ def define_from_acc(start=0, qty=10):
 
 # ether to wei convert, even if there's no web3 instance
 def ether_to_wei(value):
-    if web3:
-        return web3.toWei(value, 'ether')
-    else:
-        return value*int(Decimal(repr(1e18)))
+    web3 = import_web3()
+    return web3.toWei(value, 'ether')
 
 # value dict for txs
 def value_dict(value, unit='wei'):
@@ -31,22 +37,9 @@ def value_dict(value, unit='wei'):
     if unit=='ether':
         return {'value': ether_to_wei(value)}
 
-# initial setup messages
-def message(t='setup_start'):
-    note = '############################'
-    if t == 'setup_start':
-        print(f'\n{note} Setting up {note}\n')
-    elif t =='setup_end':
-        print(f'\n{note} Done setting up {note}')
-    elif t == 'final_assertion_check':
-        print(f'\n{note} Checking final assertion {note}\n')
-    elif t == 'solution_start':
-        print(f'\n{note} Running solution {note}\n')
-    elif t == 'solution_end':
-        print(f'\n{note} Done running solution {note}\n')
-
-# set specific account's balance to a specified value using "hardhat_setBalance"
+# set specific account's balance to a specified value using "network_setBalance"
 def set_account_balance_network(account, value):
+    web3 = import_web3()
     return web3.provider.make_request(f'{network.show_active()}_setBalance', [account, value])
 
 # rad contract abi and bytecode from a json file
@@ -60,7 +53,9 @@ def load_abi_and_bytecode_json(json_file_path):
     
 
 # load contract from JSON ABI
-def load_contract_from_abi_and_bytecode(contract_name, abi, bytecode, load_path=False, constructor_params=[], default_account=web3.eth.accounts[0]):
+def load_contract_from_abi_and_bytecode(contract_name, abi, bytecode, load_path=False, constructor_params=[], default_account=False):
+    web3 = import_web3()
+
     if load_path:
         abi, bytecode = load_abi_and_bytecode_json(load_path)
     else:
@@ -78,7 +73,8 @@ def load_contract_from_abi_and_bytecode(contract_name, abi, bytecode, load_path=
 
     # load contract from ABI and Bytecode
     contract = web3.eth.contract(abi=abi, bytecode=bytecode)
-    web3.eth.default_account = default_account
+    if default_account:
+        web3.eth.default_account = default_account
 
     # if it's a proxy, do things a little differently
     tx_hash = eval(f'contract.constructor({",".join(constructor_params)}).transact()')

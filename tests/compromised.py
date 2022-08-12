@@ -1,13 +1,11 @@
 from scripts.helper.utils import *
 from brownie import Exchange, DamnValuableNFT, TrustfulOracle, TrustfulOracleInitializer
 
-def main():
+def test_solve_challenge():
     ####################################################################
     ######### SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE #########
     ####################################################################
-
-    # starting setup messages
-    message('setup_start')
+    web3 = import_web3()
 
     # sources
     sources = [
@@ -41,34 +39,23 @@ def main():
     nft_token = DamnValuableNFT.at(exchange.token())
 
     # check if solved
-    def solution_assertion():
-        message('final_assertion_check')
-        try:
+    def check_solution():
+        ############################################
+        ############ SUCCESS CONDITIONS ############
+        ############################################
 
-            ############################################
-            ############ SUCCESS CONDITIONS ############
-            ############################################
+        # Exchange must have lost all ETH
+        assert exchange.balance() == 0
 
-            # Exchange must have lost all ETH
-            assert exchange.balance() == 0
+        # Attacker's ETH balance must have significantly increased
+        assert attacker.balance() > exchange_initial_eth_balance
 
-            # Attacker's ETH balance must have significantly increased
-            assert attacker.balance() > exchange_initial_eth_balance
+        # Attacker must not own any NFT
+        assert nft_token.balanceOf(attacker.address) == 0
 
-            # Attacker must not own any NFT
-            assert nft_token.balanceOf(attacker.address) == 0
-
-            # NFT price shouldn't have changed
-            assert oracle.getMedianPrice("DVNFT") == initial_nft_price
-            
-            return True
-            
-        except:
-            return False
-
-    # done setting up
-    message('setup_end')
-    message('solution_start')
+        # NFT price shouldn't have changed
+        assert oracle.getMedianPrice("DVNFT") == initial_nft_price
+        
 # #########################################################
 # While poking around a web service of one of the most popular DeFi projects in the space, you get a somewhat strange response from their server. This is a snippet:
 #
@@ -97,11 +84,6 @@ def main():
     ##############################
     ##### SOLUTION GOES HERE #####
     ##############################
-
-        
-
-###############################################################
-###################### CHECKING SOLUTION ######################
-###############################################################
-    message('solution_end')
-    print(f'Challenge is solved: {solution_assertion()}')
+    
+    ######################
+    check_solution()

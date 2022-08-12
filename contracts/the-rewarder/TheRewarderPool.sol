@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 import "./RewardToken.sol";
 import "../DamnValuableToken.sol";
 import "./AccountingToken.sol";
+import "../../node_modules/hardhat/console.sol";
 
 /**
  * @title TheRewarderPool
@@ -98,6 +99,7 @@ contract TheRewarderPool {
     }
 
     function isNewRewardsRound() public view returns (bool) {
+        console.log(block.timestamp);
         return block.timestamp >= lastRecordedSnapshotTimestamp + REWARDS_ROUND_MIN_DURATION;
     }
 }

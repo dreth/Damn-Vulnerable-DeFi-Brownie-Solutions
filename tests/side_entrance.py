@@ -1,13 +1,10 @@
 from scripts.helper.utils import *
 from brownie import SideEntranceLenderPool
 
-def main():
+def test_solve_challenge():
     ####################################################################
     ######### SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE #########
     ####################################################################
-
-    # starting setup messages
-    message('setup_start')
 
     # ether in pool
     ETHER_IN_POOL = ether_to_wei(100)
@@ -28,28 +25,14 @@ def main():
     assert pool.balance() == ETHER_IN_POOL
 
     # check if solved
-    def solution_assertion():
-        message('final_assertion_check')
-        try:
+    def check_solution():
+        ############################################
+        ############ SUCCESS CONDITIONS ############
+        ############################################
 
-            ############################################
-            ############ SUCCESS CONDITIONS ############
-            ############################################
-            # Not checking exactly how much is the final balance of the attacker,
-            # because it'll depend on how much gas the attacker spends in the attack
-            # If there were no gas costs, it would be balance before attack + ETHER_IN_POOL
-            
-            assert pool.balance() == 0
-            assert attacker.balance() >= ATTACKER_INITIAL_ETH_BALANCE
+        assert pool.balance() == 0
+        assert attacker.balance() >= ATTACKER_INITIAL_ETH_BALANCE
 
-            return True
-
-        except:
-            return False
-
-    # done setting up
-    message('setup_end')
-    message('solution_start')
 # #########################################################
 # A surprisingly simple lending pool allows anyone to deposit ETH, and withdraw it at any point in time.
 #
@@ -61,7 +44,7 @@ def main():
     ##############################
     ##### SOLUTION GOES HERE #####
     ##############################
-
+    
     # import attacker contract
     from brownie import FlashLoanEtherReceiver
 
@@ -75,8 +58,5 @@ def main():
     # withdraw all the ether that's credited to the attacker contract from the pool
     receiver.withdrawFromPool(_fromAttacker)
 
-###############################################################
-###################### CHECKING SOLUTION ######################
-###############################################################
-    message('solution_end')
-    print(f'Challenge is solved: {solution_assertion()}')
+    ######################
+    check_solution()

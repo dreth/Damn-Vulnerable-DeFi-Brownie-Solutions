@@ -1,14 +1,10 @@
 from scripts.helper.utils import *
 from brownie import ClimberTimelock, ClimberVault, DamnValuableToken
 
-def main():
+def test_solve_challenge():
     ####################################################################
     ######### SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE #########
     ####################################################################
-
-
-    # starting setup messages
-    message('setup_start')
 
     # Vault starts with 10 million tokens
     VAULT_TOKEN_BALANCE = ether_to_wei(10000000)
@@ -51,23 +47,14 @@ def main():
     assert token.balanceOf(proxy_vault.address) == VAULT_TOKEN_BALANCE
 
     # check if solved
-    def solution_assertion():
-        message('final_assertion_check')
-        try:
+    def check_solution():
+        ############################################
+        ############ SUCCESS CONDITIONS ############
+        ############################################
 
-            ############################################
-            ############ SUCCESS CONDITIONS ############
-            ############################################
-            assert token.balanceOf(proxy_vault.address) == 0
-            assert token.balanceOf(attacker.address) == VAULT_TOKEN_BALANCE
-            return True
-            
-        except:
-            return False
+        assert token.balanceOf(proxy_vault.address) == 0
+        assert token.balanceOf(attacker.address) == VAULT_TOKEN_BALANCE
 
-    # done setting up
-    message('setup_end')
-    message('solution_start')
 # #########################################################
 # There's a secure vault contract guarding 10 million DVT tokens. The vault is upgradeable, following the UUPS pattern.
 #
@@ -83,11 +70,6 @@ def main():
     ##############################
     ##### SOLUTION GOES HERE #####
     ##############################
-
-        
-
-###############################################################
-###################### CHECKING SOLUTION ######################
-###############################################################
-    message('solution_end')
-    print(f'Challenge is solved: {solution_assertion()}')
+    
+    ######################
+    check_solution()

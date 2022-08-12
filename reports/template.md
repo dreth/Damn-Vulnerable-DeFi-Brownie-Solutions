@@ -1,6 +1,0 @@
-## Name
-
-### Challenge description
-
-### Solution
-

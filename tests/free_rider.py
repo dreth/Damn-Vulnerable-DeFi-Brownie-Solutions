@@ -1,13 +1,11 @@
 from scripts.helper.utils import *
 from brownie import WETH9, DamnValuableToken, FreeRiderNFTMarketplace, DamnValuableNFT, FreeRiderBuyer
 
-def main():
+def test_solve_challenge():
     ####################################################################
     ######### SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE #########
     ####################################################################
-
-    # starting setup messages
-    message('setup_start')
+    web3 = import_web3()
 
     # The NFT marketplace will have 6 tokens, at 15 ETH each
     NFT_PRICE = ether_to_wei(15)
@@ -84,34 +82,25 @@ def main():
     buyer_contract = FreeRiderBuyer.deploy(attacker.address, nft.address, _fromDeployer | value_dict(BUYER_PAYOUT))
 
     # check if solved
-    def solution_assertion():
-        message('final_assertion_check')
-        try:
+    def check_solution():
+        ############################################
+        ############ SUCCESS CONDITIONS ############
+        ############################################
 
-            ############################################
-            ############ SUCCESS CONDITIONS ############
-            ############################################
-            # Attacker must have earned all ETH from the payout
-            assert attacker.balance() > BUYER_PAYOUT
-            assert buyer_contract.balance() == 0
+        # Attacker must have earned all ETH from the payout
+        assert attacker.balance() > BUYER_PAYOUT
+        assert buyer_contract.balance() == 0
 
-            # The buyer extracts all NFTs from its associated contract
-            for token_id in range(AMOUNT_OF_NFTS):
-                nft.transferFrom(buyer_contract.address, buyer.address, token_id, _fromBuyer)
-                assert nft.ownerOf(token_id) == buyer.address
+        # The buyer extracts all NFTs from its associated contract
+        for token_id in range(AMOUNT_OF_NFTS):
+            nft.transferFrom(buyer_contract.address, buyer.address, token_id, _fromBuyer)
+            assert nft.ownerOf(token_id) == buyer.address
 
-            # Exchange must have lost NFTs and ETH
-            assert marketplace.amountOfOffers() == 0
-            assert marketplace.balance() < MARKETPLACE_INITIAL_ETH_BALANCE
+        # Exchange must have lost NFTs and ETH
+        assert marketplace.amountOfOffers() == 0
+        assert marketplace.balance() < MARKETPLACE_INITIAL_ETH_BALANCE
 
-            return True
-        except:
-            return False
-
-    # done setting up
-    message('setup_end')
-    message('solution_start')
-# #########################################################
+# ######################################################### 
 # A new marketplace of Damn Valuable NFTs has been released! There's been an initial mint of 6 NFTs, which are available for sale in the marketplace. Each one at 15 ETH.
 #
 # A buyer has shared with you a secret alpha: the marketplace is vulnerable and all tokens can be taken. Yet the buyer doesn't know how to do it. So it's offering a payout of 45 ETH for whoever is willing to take the NFTs out and send them their way.
@@ -124,11 +113,8 @@ def main():
     ##############################
     ##### SOLUTION GOES HERE #####
     ##############################
-
-        
-
-###############################################################
-###################### CHECKING SOLUTION ######################
-###############################################################
-    message('solution_end')
-    print(f'Challenge is solved: {solution_assertion()}')
+    
+    ######################
+    check_solution()
+    
+    

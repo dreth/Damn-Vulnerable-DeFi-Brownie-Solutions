@@ -1,12 +1,12 @@
-# Damn Vulnerable DeFi (Brownie Scripts)
+# Damn Vulnerable DeFi (Brownie Tests)
 
-This repo is an adaptation of the [Damn Vulnerable DeFi challenges](https://damnvulnerabledefi.xyz) to use Brownie scripts.
+This repo is an adaptation of the [Damn Vulnerable DeFi challenges](https://damnvulnerabledefi.xyz) to use Brownie tests.
 
-Given how unfamiliar (at first) the ethers.js syntax was for me despite knowing some javascript, I decided to adapt the code to work with brownie. In this case, I've basically translated the code for all the challenge setups and success/fail checks to function somewhat similarly to the original challenges.
+Given how unfamiliar (at first) the ethers.js syntax was for me despite knowing some javascript, I decided to adapt the code to work with brownie. In this case, I've basically translated the code for all the challenge setups and success/fail checks to function rather similarly to the original challenges.
 
 This was a challenge in itself to familiarize myself a little better with the ethers.js/hardhat syntax and how it works in general by establishing parallels to brownie, which I had become familiarized with through solving the [Ethernaut](https://dac.ac/blog/ethernaut_solutions/) and [Capture the ether](https://dac.ac/blog/capture_the_ether_solutions/) challenges.
 
-This repo can be used by anyone to solve the challenges using brownie scripts, which may be preferred over tests depending on your use of brownie. Given my lack of unit testing experience, scripts feel a little more familiar, that's why I went this route to solve the Ethernaut and Capture the ether challenges. However, given that these challenges are originally written using tests, [I also made a repo like this one to use the brownie testing framework](https://github.com/dreth/DamnVulnerableDeFiBrownie-Tests), the code is pretty much the same, but it uses tests.
+This repo can be used by anyone to solve the challenges using brownie tests. However, given my lack of unit testing experience, scripts have felt a little more familiar for other CTFs, as a result, [I also made a repo like this one to use brownie scripts](https://github.com/dreth/DamnVulnerableDeFiBrownie). Still, the code is pretty much the same as in this repo, but it uses scripts.
 
 I will keep this repo and the repo that uses tests with no solutions, so that anyone can use them.
 
@@ -14,13 +14,11 @@ I will keep this repo and the repo that uses tests with no solutions, so that an
 
 ## How I set it up
 
-Similar to the original challenges, the user is expected to have a decent idea of what they're doing. So the challenge setup is given right before the code block where the user has to write their actions that will solve a given challenge, as well as the conditions to solve the challenge right under it.
-
-I have also used this approach, but with some little things I like to do when working in brownie to write less code. 
+Similar to the original challenges, the user is expected to have a decent idea of what they're doing. So the challenge setup is given right before the code block where the user has to write their actions that will solve a given challenge, as well as the conditions to solve the challenge right under it. I have also used this same approach here.
 
 Important details:
 
-* The challenge setup for each challenge is before where you should write the solution in every script under `scripts`, just under `SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE`.
+* The challenge setup for each challenge is in each testing script under `tests` right before where you have to write your solutions, just like in the original challenges.
 
 * The setup is largely identical to the original setup, but with some nuances, some related to the development framework (brownie vs ethers+hardhat), others to my personal choices when writing the code for it. I hope my changes make the process easier, but you can always modify what I've done. I won't explain the differences between brownie and ethers+hardhat, but I will explain what things I've changed, and what I haven't:
   
@@ -29,28 +27,36 @@ Important details:
 
 ## How to solve the challenges
 
-The code for each contract is under `contracts`, just like in the original challenges. Any contract's build data for which I needed the ABI and bytecode is under `built_helper_contracts`, you can just ignore this (unless you see a mistake, please notify me if so).
+In order to solve the challenges, you must obviously see the challenge setup in the first chunk of each test script marked by `SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE`, which defines the initial conditions like attacker balance, etc. 
+
+The text shown on the Damn Vulnerable DeFi site is also included right before where the code solving the challenges is supposed to be written.
+
+The code for each contract is under `contracts`, just like in the original challenges. However, any contract's build data for which I needed the ABI and bytecode is under `built_helper_contracts`, you can just ignore this (unless you see a mistake, please notify me if so).
 
 To solve the challenges:
 
-1. Make sure that you can use the hardhat or anvil networks. You'll need to install hardhat or anvil. This is rather easy to do and you can follow the steps outlined in [this article of the brownie docs](https://eth-brownie.readthedocs.io/en/stable/install.html#using-brownie-with-hardhat).
+1. Fork this repository or download its contents and copy them to one of your own
 
-2. Run one of the scripts (or open the brownie console) so that brownie downloads/installs and compiles all required contracts that are required to compile those within the repo. If everything works fine, you don't need to do anything else. For me, however, during compilation, some contracts from the libraries required minimal modifications to work as intended, as a result, I made a simple script in the root directory of the repo (`fix_libs.py`) that will apply those changes to the scripts after brownie installs them.
+2. Make sure that you can use the hardhat or anvil networks. You'll need to install hardhat or anvil. This is rather easy to do and you can follow the steps outlined in [this article of the brownie docs](https://eth-brownie.readthedocs.io/en/stable/install.html#using-brownie-with-hardhat). 
 
-3. Go under `scripts` to each challenge and write your transactions under the `solve_challenge()` function. Do not modify the code under `SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE`, as those define the initial setup for each challenge.
+3. Run one of the tests (or open the brownie console) so that brownie downloads/installs and compiles all required contracts that are required to compile those within the repo. If everything works fine, you don't need to do anything else. For me, however, during compilation, some contracts from the libraries required minimal modifications to work as intended, as a result, I made a simple script in the root directory of the repo (`fix_libs.py`) that will apply those changes to the scripts after brownie installs them.
 
-4. Run each script with:
+4. Go under `tests` to each challenge and write your transactions under script section marked with `SOLUTION GOES HERE`. Do not modify the code before each solution, as that's the initial setup for each challenge.
+
+5. Run each test with:
 
 ```
-brownie run script_name --network network
+brownie test tests/test_script_name.py --network network
 ```
 
-* `script_name` is the name of your script for each challenge
+Where:
+
+* `test_script_name` is the name of your test script for each challenge
 * `network` after the `--network` flag is either `hardhat` or `anvil`
 
 **Note: If you want to use Anvil, I only managed to get it to work with brownie versions _after_ 1.19.0, as of writing this, that's the latest version of brownie, to implement some fixes that allow Anvil to work well, you should just install [via setuptools while in the master branch of the repo](https://github.com/eth-brownie/brownie#via-setuptools).**
 
-5. The script has several print statements to show each section of each challenge and their respective transactions running. I print those using the `message` function I defined in utils, a rather silly function but I like how the code looks as opposed to just writing print in every script. If your challenge is solved and the assertions all pass, there will be a message that says `Challenge is solved: True`. 
+6. If all tests pass, you've successfully solved the challenge.
 
 ## If you find a mistake
 

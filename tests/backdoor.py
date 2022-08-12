@@ -1,13 +1,10 @@
 from scripts.helper.utils import *
 from brownie import DamnValuableToken, WalletRegistry
 
-def main():
+def test_solve_challenge():
     ####################################################################
     ######### SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE #########
     ####################################################################
-
-    # starting setup messages
-    message('setup_start')
 
     # tokens in lender pool
     AMOUNT_TOKENS_DISTRIBUTED = ether_to_wei(40)
@@ -47,33 +44,23 @@ def main():
     token.transfer(wallet_registry.address, AMOUNT_TOKENS_DISTRIBUTED, _fromDeployer)
 
     # check if solved
-    def solution_assertion():
-        message('final_assertion_check')
-        try:
+    def check_solution():
+        ############################################
+        ############ SUCCESS CONDITIONS ############
+        ############################################
 
-            ############################################
-            ############ SUCCESS CONDITIONS ############
-            ############################################
+        for user in users:
+            wallet = wallet_registry.wallets(user)
 
-            for user in users:
-                wallet = wallet_registry.wallets(user)
+            # User must have registered a wallet
+            assert wallet != ZERO_ADDRESS
 
-                # User must have registered a wallet
-                assert wallet != ZERO_ADDRESS
+            # User is no longer registered as a beneficiary
+            assert wallet_registry.beneficiaries(user) == False
 
-                # User is no longer registered as a beneficiary
-                assert wallet_registry.beneficiaries(user) == False
+        # Attacker must have taken all tokens
+        assert token.balanceOf(attacker) == AMOUNT_TOKENS_DISTRIBUTED
 
-            # Attacker must have taken all tokens
-            assert token.balanceOf(attacker) == AMOUNT_TOKENS_DISTRIBUTED
-
-            return True
-        except:
-            return False
-
-    # done setting up
-    message('setup_end')
-    message('solution_start')
 # #########################################################
 # To incentivize the creation of more secure wallets in their team, someone has deployed a registry of Gnosis Safe wallets. When someone in the team deploys and registers a wallet, they will earn 10 DVT tokens.
 #
@@ -87,11 +74,6 @@ def main():
     ##############################
     ##### SOLUTION GOES HERE #####
     ##############################
-
-        
-
-###############################################################
-###################### CHECKING SOLUTION ######################
-###############################################################
-    message('solution_end')
-    print(f'Challenge is solved: {solution_assertion()}')
+    
+    ######################
+    check_solution()

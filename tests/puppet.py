@@ -1,13 +1,11 @@
 from scripts.helper.utils import *
 from brownie import DamnValuableToken, PuppetPool
 
-def main():
+def test_solve_challenge():
     ####################################################################
     ######### SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE #########
     ####################################################################
-
-    # starting setup messages
-    message('setup_start')
+    web3 = import_web3()
 
     # Calculates how much ETH (in wei) Uniswap will pay for the given amount of tokens
     def calculate_token_to_eth_input_price(tokensSold, tokensInReserve, etherInReserve):
@@ -60,23 +58,15 @@ def main():
     assert lending_pool.calculateDepositRequired(POOL_INITIAL_TOKEN_BALANCE) == POOL_INITIAL_TOKEN_BALANCE*2
 
     # check if solved
-    def solution_assertion():
-        message('final_assertion_check')
-        try:
+    def check_solution():
+        ############################################
+        ############ SUCCESS CONDITIONS ############
+        ############################################
 
-            ############################################
-            ############ SUCCESS CONDITIONS ############
-            ############################################
-            # Attacker has taken all tokens from the pool
-            assert token.balanceOf(lending_pool.address) == 0
-            assert token.balanceOf(attacker.address) == POOL_INITIAL_TOKEN_BALANCE
-            return True
-        except:
-            return False
+        # Attacker has taken all tokens from the pool
+        assert token.balanceOf(lending_pool.address) == 0
+        assert token.balanceOf(attacker.address) == POOL_INITIAL_TOKEN_BALANCE
 
-    # done setting up
-    message('setup_end')
-    message('solution_start')
 # #########################################################
 # There's a huge lending pool borrowing Damn Valuable Tokens (DVTs), where you first need to deposit twice the borrow amount in ETH as collateral. The pool currently has 100000 DVTs in liquidity.
 #
@@ -88,11 +78,6 @@ def main():
     ##############################
     ##### SOLUTION GOES HERE #####
     ##############################
-
-        
-
-###############################################################
-###################### CHECKING SOLUTION ######################
-###############################################################
-    message('solution_end')
-    print(f'Challenge is solved: {solution_assertion()}')
+    
+    ######################
+    check_solution()

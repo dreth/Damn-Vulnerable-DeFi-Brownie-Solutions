@@ -1,14 +1,10 @@
 from scripts.helper.utils import *
 from brownie import DamnValuableTokenSnapshot, SimpleGovernance, SelfiePool
 
-def main():
+def test_solve_challenge():
     ####################################################################
     ######### SETUP SCENARIO - NO NEED TO CHANGE ANYTHING HERE #########
     ####################################################################
-
-
-    # starting setup messages
-    message('setup_start')
 
     # tokens in pool and token initial supply
     TOKENS_IN_POOL = ether_to_wei(1500000)
@@ -29,23 +25,15 @@ def main():
     assert token.balanceOf(pool.address) == TOKENS_IN_POOL
 
     # check if solved
-    def solution_assertion():
-        message('final_assertion_check')
-        try:
+    def check_solution():
+        ############################################
+        ############ SUCCESS CONDITIONS ############
+        ############################################
 
-            ############################################
-            ############ SUCCESS CONDITIONS ############
-            ############################################
-            # Attacker has taken all tokens from the pool
-            assert token.balanceOf(attacker.address) == TOKENS_IN_POOL
-            assert token.balanceOf(pool.address) == 0
-            return True
-        except:
-            return False
+        # Attacker has taken all tokens from the pool
+        assert token.balanceOf(attacker.address) == TOKENS_IN_POOL
+        assert token.balanceOf(pool.address) == 0
 
-    # done setting up
-    message('setup_end')
-    message('solution_start')
 # #########################################################
 # A new cool lending pool has launched! It's now offering flash loans of DVT tokens.
 #
@@ -59,11 +47,6 @@ def main():
     ##############################
     ##### SOLUTION GOES HERE #####
     ##############################
-
-        
-
-###############################################################
-###################### CHECKING SOLUTION ######################
-###############################################################
-    message('solution_end')
-    print(f'Challenge is solved: {solution_assertion()}')
+    
+    ######################
+    check_solution()
