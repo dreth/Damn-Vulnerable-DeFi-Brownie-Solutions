@@ -82,9 +82,6 @@ def test_solve_challenge():
     # deploy attacker contract
     attacker_contract = TheRewarderAttack.deploy(rewarder_pool.address, flashloan_pool.address, _fromAttacker)
 
-    # take the flash loan
-    attacker_contract.takeLoan(_fromAttacker)
-
     # wait 5 days
     web3.provider.make_request('evm_increaseTime', [5*24*60*60])
 
@@ -97,7 +94,5 @@ def test_solve_challenge():
     # flashloan to distribute rewards again
     attacker_contract.takeLoan(_fromAttacker)
 
-
-    
     ######################
     check_solution()
