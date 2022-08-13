@@ -1,8 +1,8 @@
-from decimal import Decimal
-from email.policy import default
-from brownie import accounts, chain, Contract, ZERO_ADDRESS, project, config, network
+from brownie import accounts, Contract, ZERO_ADDRESS, network
 import json
 from pathlib import Path
+import rlp
+from eth_utils import keccak, to_checksum_address, to_bytes
 
 # import web3 if necessary
 def import_web3():
@@ -82,3 +82,19 @@ def load_contract_from_abi_and_bytecode(contract_name, abi, bytecode, load_path=
     # return contract
     contract_address = web3.eth.wait_for_transaction_receipt(tx_hash).contractAddress
     return Contract.from_abi(contract_name, contract_address, abi=abi)
+
+
+# compute address of a given contract to be deployed from
+# the deployer address + nonce, as stated in the Section 7 
+# of the Ethereum yellowpaper for contracts created using CREATE
+def mk_contract_address(sender: str, nonce: int) -> str:
+    """Create a contract address using eth-utils.
+    # Modified from Mikko Ohtamaa's original answer which was later
+    # edited by Utgarda
+    # Obtained from https://ethereum.stackexchange.com/questions/760/how-is-the-address-of-an-ethereum-contract-computed
+    """
+    sender_bytes = to_bytes(hexstr=sender)
+    raw = rlp.encode([sender_bytes, nonce])
+    h = keccak(raw)
+    address_bytes = h[12:]
+    return to_checksum_address(address_bytes)

@@ -75,7 +75,7 @@ def test_solve_challenge():
     ##### SOLUTION GOES HERE #####
     ##############################
 
-    # import attacker contract
+    # import attacker contract and web3
     from brownie import TheRewarderAttack
     web3 = import_web3()
 

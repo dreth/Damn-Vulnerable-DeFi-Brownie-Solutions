@@ -21,7 +21,7 @@ def test_solve_challenge():
 
     # confirm the balances are correct
     assert pool.balance() == ETHER_IN_POOL
-    assert pool.fixedFee() == int(Decimal(repr(1e18)))
+    assert pool.fixedFee() == ether_to_wei(1)
 
     # deploy flash loan receiver
     receiver = FlashLoanReceiver.deploy(pool.address, _fromDeployer)
