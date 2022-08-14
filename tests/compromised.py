@@ -1,4 +1,4 @@
-from scripts.helper.utils import *
+from scripts.utils import *
 from brownie import Exchange, DamnValuableNFT, TrustfulOracle, TrustfulOracleInitializer
 
 def test_solve_challenge():

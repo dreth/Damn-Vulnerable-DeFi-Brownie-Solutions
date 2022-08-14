@@ -1,4 +1,4 @@
-from scripts.helper.utils import *
+from scripts.utils import *
 from brownie import DamnValuableToken, WETH9, PuppetV2Pool
 
 def test_solve_challenge():

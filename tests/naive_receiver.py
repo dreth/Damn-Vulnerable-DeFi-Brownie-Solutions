@@ -1,4 +1,4 @@
-from scripts.helper.utils import *
+from scripts.utils import *
 from brownie import NaiveReceiverLenderPool, FlashLoanReceiver
 
 def test_solve_challenge():

@@ -1,4 +1,4 @@
-from scripts.helper.utils import *
+from scripts.utils import *
 from brownie import WETH9, DamnValuableToken, FreeRiderNFTMarketplace, DamnValuableNFT, FreeRiderBuyer
 
 def test_solve_challenge():
