@@ -25,10 +25,14 @@ def define_from_acc(start=0, qty=10):
     # return values
     return tuple(accs)
 
-# ether to wei convert, even if there's no web3 instance
+# ether to wei convert
 def ether_to_wei(value):
     web3 = import_web3()
     return web3.toWei(value, 'ether')
+
+# wei to ether convert
+def wte(value):
+    return value / int(1e18)
 
 # value dict for txs
 def value_dict(value, unit='wei'):

@@ -22,7 +22,7 @@ After all these requirements are passed, we can call an `onlyGovernance()` gated
 
 Given that SelfiePool offers loans in exactly the same token that is required to make governance proposals, I did the following to successfully drain all funds:
 
-1- Deploy an attacker contract which can take loans from the pool:
+First deploy an attacker contract which can take loans from the pool:
 
 ```cs
 function takeLoan() public {
@@ -54,12 +54,12 @@ After these two actions, the contract should return the borrowed funds back to t
 token.transfer(address(pool), amount);
 ```
 
-2- After deploying the attacker contract, I generated the calldata for the `drainAllFunds()` function and set it to the `attackData` state variable in the attacker contract.
+After deploying the attacker contract, I generated the calldata for the `drainAllFunds()` function and set it to the `attackData` state variable in the attacker contract.
 
-3- Then called the function in the attacker contract that takes the loan, which executes the actions in `receiveTokens()`, those described in step 1.
+Call the function in the attacker contract that takes the loan, which executes the actions in `receiveTokens()`, those described in step 1.
 
-4- After this I waited 2 days using the rpc `evm_increaseTime` request (acceptable as it's a testnet environment, in the real world 2 days have to pass)
+Wait 2 days using the rpc `evm_increaseTime` request (acceptable as it's a testnet environment, in the real world 2 days have to pass)
 
-5- Execute the governance action calling `executeAction()` with the corresponding `actionId`.
+Execute the governance action calling `executeAction()` with the corresponding `actionId`.
 
 This will drain the funds and transfer them to the attacker address.
