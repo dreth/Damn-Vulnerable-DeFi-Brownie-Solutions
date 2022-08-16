@@ -72,7 +72,7 @@ def test_solve_challenge():
 
         # Attacker has taken all tokens from the pool
         assert token.balanceOf(lending_pool.address) == 0
-        assert token.balanceOf(attacker.address) == POOL_INITIAL_TOKEN_BALANCE
+        assert token.balanceOf(attacker.address) >= POOL_INITIAL_TOKEN_BALANCE
 
 # #########################################################
 # The developers of the last lending pool are saying that they've learned the lesson. And just released a new version!
@@ -85,6 +85,8 @@ def test_solve_challenge():
     ##############################
     ##### SOLUTION GOES HERE #####
     ##############################
+
+    # 
     
     ######################
     check_solution()

