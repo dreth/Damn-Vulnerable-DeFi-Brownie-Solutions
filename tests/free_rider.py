@@ -133,7 +133,7 @@ def test_solve_challenge():
 
     # take the flash swap
     attacker_contract.flashSwap(ether_to_wei(15), _fromAttacker)
-
+ 
     # recover leftover ETH from the attacker contract
     attacker_contract.recoverETH(_fromAttacker)
 
