@@ -115,7 +115,7 @@ To steall all the tokens in one transaction, we must create a function in the at
     + The creation will assign the `fallbackHandler` as the DVT token contract address
     + The creation will assign the `callback` proxy creation callback interface to the WalletFactory contract
 
-2. Make a call to the newly created Gnosis Safe multisig for user `user` with function selector + calldata performing a token transfer. The function selector specified must be that of the `transfer()` function of the DVT token contract. The calldata should be the receiver of those tokens (the attacker address) and the amount should be the entire balance that the WalletRegistry will send to the newly created multisig (10 DVT tokens). 
+2. Make a call to the newly created Gnosis Safe multisig for user `user` with function selector + calldata performing a token transfer. The function selector specified must be that of the `transfer()` function of the DVT token contract. The calldata should be the receiver of those tokens (the attacker address) and the amount should be the entire balance that the WalletRegistry will send to the newly created multisig (10 DVT tokens). This call will effectively transfer the 10 DVT tokens in that Safe to the attacker's address.
 
 I decided to pass the calldata for the `setup()` and `transfer()` functions as a parameter to the function so that the contract is more readable:
 
