@@ -102,3 +102,8 @@ def mk_contract_address(sender: str, nonce: int) -> str:
     h = keccak(raw)
     address_bytes = h[12:]
     return to_checksum_address(address_bytes)
+
+# debug tx method
+def debug_tx(tx_address):
+    web3 = import_web3()
+    return web3.provider.make_request('debug_traceTransaction', [tx_address])

