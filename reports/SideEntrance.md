@@ -14,13 +14,13 @@ SideEntranceLenderPool's `flashLoan()` function expects to interact with a contr
 
 Then, the `flashLoan()` function checks the following:
 
-```cs
+```solidity
 require(address(this).balance >= balanceBefore, "Flash loan hasn't been paid back"); 
 ```
 
 Meaning the funds can be returned to the contract through `deposit()`:
 
-```cs
+```solidity
 function execute() external payable {
     pool.deposit{value: msg.value}();
 }
@@ -30,7 +30,7 @@ Given the reentrancy vulnerability, we can call `deposit()` in `execute()` with 
 
 This entitles the attacker contract to withdrawing the full pool contract balance, which can be then forwarded to the attacker address:
 
-```cs
+```solidity
 function withdrawFromPool() external payable {
     pool.withdraw();
 }

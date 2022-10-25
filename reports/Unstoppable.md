@@ -14,19 +14,19 @@ There's a bug in the UnstoppableLender contract which can be exploited to preven
 
 Line 37 in the `flashLoan()` function checks for the current contract token balance:
 
-```js
+```solidity
 uint256 balanceBefore = damnValuableToken.balanceOf(address(this));
 ```
 
 This checks for the *real token balance in the contract*. But then, the contract compares it with the variable `poolBalance`:
 
-```js
+```solidity
 assert(poolBalance == balanceBefore);
 ```
 
 `poolBalance` can only increase if a deposit is made through the `depositTokens` function:
 
-```js
+```solidity
 poolBalance = poolBalance + amount;
 ```
 

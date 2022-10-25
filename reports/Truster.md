@@ -12,7 +12,7 @@
 
 After the TrusterLenderPool transfers borrowed tokens to the borrower, it runs the following call to a specified `target` contract which is supposed to perform certain actions in behalf of the borrower (as the borrower programs it) with the tokens and is supposed to return the tokens back into the pool:
 
-```cs
+```solidity
 target.functionCall(data);
 ```
 

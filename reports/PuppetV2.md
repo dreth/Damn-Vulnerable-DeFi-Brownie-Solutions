@@ -57,7 +57,7 @@ weth.approve(lending_pool.address, amount, _fromAttacker)
 
 Given that the PuppetV2Pool calls `transferFrom()` in `borrow()`:
 
-```cs
+```solidity
 _weth.transferFrom(msg.sender, address(this), depositOfWETHRequired);
 ```
 

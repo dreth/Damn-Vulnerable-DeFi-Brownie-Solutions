@@ -18,7 +18,7 @@ For the registry to accept each proxy creation as correct and to steal the token
 
 1. The WalletRegistry contract must have enough DVT tokens to make the payment to the beneficiary
 
-```js
+```solidity
 require(token.balanceOf(address(this)) >= TOKEN_PAYMENT, "Not enough funds to pay");
 ```
 
@@ -26,13 +26,13 @@ This does not directly depend on us, so we can continue.
 
 1. The caller contract must be the GnosisSafeProxyFactory contract
 
-```js
+```solidity
 require(msg.sender == walletFactory, "Caller must be factory");
 ```
 
 To achieve this, all we have to do is use the correct call when creating the proxy through the proxy factory contract. The call that invokes this function in the WalletRegistry (of course, specifying that this is the wallet registry that will receive the callback) is the function `createProxyWithCallback()`. This function takes the following parameters:
 
-```cs
+```solidity
 function createProxyWithCallback(
     address _singleton,
     bytes memory initializer,
@@ -48,7 +48,7 @@ function createProxyWithCallback(
 
 3. The right singleton contract must be used
 
-```js
+```solidity
 require(singleton == masterCopy, "Fake mastercopy used");
 ```
 
@@ -57,13 +57,13 @@ This is covered by using the address of `masterCopy` (the Gnosis Safe implementa
 
 4. We must be calling `setup()`
 
-```js
+```solidity
 require(bytes4(initializer[:4]) == GnosisSafe.setup.selector, "Wrong initialization");
 ```
 
 `setup()` is the initializer function for a Gnosis Safe multisignature wallet. This function is in the Gnosis Safe implementation contract (GnosisSafe.sol) and it takes the following parameters:
 
-```cs
+```solidity
 function setup(
     address[] calldata _owners,
     uint256 _threshold,
@@ -87,7 +87,7 @@ function setup(
 
 5. The `_threshold` parameter in the `setup()` call needs to be 1.
 
-```js
+```solidity
 require(GnosisSafe(walletAddress).getThreshold() == MAX_THRESHOLD, "Invalid threshold");
 ```
 
@@ -95,7 +95,7 @@ As specified in 4.
 
 6. The `_owners` array must be of length 1, so each multisig wallet must have at most 1 owner.
 
-```js
+```solidity
 require(GnosisSafe(walletAddress).getOwners().length == MAX_OWNERS, "Invalid number of owners");
 ```
 
@@ -103,7 +103,7 @@ As specified in 4.
 
 7. The owner set per multisig must be in the list of beneficiaries.
 
-```js
+```solidity
 require(beneficiaries[walletOwner], "Owner is not registered as beneficiary");
 ```
 
@@ -119,7 +119,7 @@ To steall all the tokens in one transaction, we must create a function in the at
 
 I decided to pass the calldata for the `setup()` and `transfer()` functions as a parameter to the function so that the contract is more readable:
 
-```js
+```solidity
 function deploySafesAndStealTokens(bytes[] calldata maliciousSetupCalls, bytes calldata maliciousTransferCall) external {
     // loop over the malicious calls, creating a new proxy per loop
     // which will allow us to then call transfer after the token contract

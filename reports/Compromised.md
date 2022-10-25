@@ -70,7 +70,7 @@ After posting 0 for each of them, the median price returned by `getMedianPrice()
 
 We can then use the attacker account to buy one of these NFTs for 1 wei. We need to send at least 1 wei when buying, as requested by the `buyOne()` function:
 
-```cs
+```solidity
 uint256 amountPaidInWei = msg.value;
 require(amountPaidInWei > 0, "Amount paid must be greater than zero");
 ```

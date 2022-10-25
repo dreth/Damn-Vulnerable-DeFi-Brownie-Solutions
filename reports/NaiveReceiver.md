@@ -12,13 +12,13 @@
 
 The receiver contract will forward `amountToBeRepaid` to the pool, which includes the pool fee:
 
-```cs
+```solidity
 uint256 amountToBeRepaid = msg.value + fee;
 ```
 
 And the pool will always charge a fixed fee of 1 ETH in `flashLoan()`:
 
-```cs
+```solidity
 require(
     address(this).balance >= balanceBefore + FIXED_FEE,
     "Flash loan hasn't been paid back"
@@ -27,7 +27,7 @@ require(
 
 Given that the `receiveEther()` function does not check for a `msg.value` and that the contract doesn't check that `tx.origin` comes from the deployer of the receiver contract (whoever owns it), it is possible to drain its balance and send it to the pool in either 10 transactions with a `borrowAmount` of 0 wei or in one transaction in a short contract which performs a loop:
 
-```cs
+```solidity
 function attack() public {
     for (uint8 i = 0; i < 10; i++) {
         naiveReceiverPool.flashLoan(address(naiveReceiver), 0);
