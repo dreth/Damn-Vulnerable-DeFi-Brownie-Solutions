@@ -59,3 +59,20 @@ Where:
 ## If you find a mistake
 
 Once again, if you see a mistake in the code, **please open an issue or a PR**. I'm not an expert by any stretch of the imagination and I'm still learning. I wanted to make this so anyone that prefers or wishes to use brownie+hardhat or brownie+anvil over ethers+hardhat tests can solve these challenges (including myself), despite this, I still recommend using the [original repo](https://github.com/tinchoabbate/damn-vulnerable-defi) to solve the challenges if you can.
+
+## Solutions
+
+1. [Unstoppable](https://github.com/dreth/Damn-Vulnerable-DeFi-Brownie-Solutions/blob/main/reports/Unstoppable.md)
+2. [Naive receiver](https://github.com/dreth/Damn-Vulnerable-DeFi-Brownie-Solutions/blob/main/reports/NaiveReceiver.md)
+3. [Truster](https://github.com/dreth/Damn-Vulnerable-DeFi-Brownie-Solutions/blob/main/reports/Truster.md)
+4. [Side entrance](https://github.com/dreth/Damn-Vulnerable-DeFi-Brownie-Solutions/blob/main/reports/SideEntrance.md)
+5. [The rewarder](https://github.com/dreth/Damn-Vulnerable-DeFi-Brownie-Solutions/blob/main/reports/TheRewarder.md)
+6. [Selfie](https://github.com/dreth/Damn-Vulnerable-DeFi-Brownie-Solutions/blob/main/reports/Selfie.md)
+7. [Compromised](https://github.com/dreth/Damn-Vulnerable-DeFi-Brownie-Solutions/blob/main/reports/Compromised.md)
+8. [Puppet](https://github.com/dreth/Damn-Vulnerable-DeFi-Brownie-Solutions/blob/main/reports/Puppet.md)
+9. [Puppet v2](https://github.com/dreth/Damn-Vulnerable-DeFi-Brownie-Solutions/blob/main/reports/PuppetV2.md)
+10. [Free rider](https://github.com/dreth/Damn-Vulnerable-DeFi-Brownie-Solutions/blob/main/reports/FreeRider.md)
+11. [Backdoor](https://github.com/dreth/Damn-Vulnerable-DeFi-Brownie-Solutions/blob/main/reports/Backdoor.md)
+12. [Climber](https://github.com/dreth/Damn-Vulnerable-DeFi-Brownie-Solutions/blob/main/reports/Climber.md)
+
+I intentionally didn't solve safe miners given the disclaimer shown on the site about an update to the challenge: _"Watchout! This challenge is being heavily reworked for the upcoming v3 version of Damn Vulnerable DeFi. You'd better wait for the new version before solving it."_
