@@ -1,4 +1,4 @@
-# Damn Vulnerable DeFi (Brownie Tests)
+# Damn Vulnerable DeFi (Brownie Tests) solutions
 
 This repo is an adaptation of the [Damn Vulnerable DeFi challenges](https://damnvulnerabledefi.xyz) to use Brownie tests.
 
@@ -6,7 +6,7 @@ Given how unfamiliar (at first) the ethers.js syntax was for me despite knowing 
 
 This was a challenge in itself to familiarize myself a little better with the ethers.js/hardhat syntax and how it works in general by establishing parallels to brownie, which I had become familiarized with through solving the [Ethernaut](https://dac.ac/blog/ethernaut_solutions/) and [Capture the ether](https://dac.ac/blog/capture_the_ether_solutions/) challenges.
 
-This repo does NOT contain any solutions.
+This repo contains solutions to all the challenges except the last one (safe miners)
 
 **If you find an error, please post an issue or open a PR. I would really appreciate it**
 
