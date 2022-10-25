@@ -1,4 +1,4 @@
-## Selfie
+## Puppet V2
 
 ### Challenge description
 

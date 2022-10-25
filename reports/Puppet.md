@@ -1,4 +1,4 @@
-## Selfie
+## Puppet
 
 ### Challenge description
 
