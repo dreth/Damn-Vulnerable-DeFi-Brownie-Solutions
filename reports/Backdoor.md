@@ -14,7 +14,7 @@
 
 The Backdoor challenge tasks us with deploying a Gnosis Safe proxy for 4 users through a Gnosis Safe Proxy Factory. After each deployment, 10 DVT tokens will be distributed to each one of those users (the beneficiaries)
 
-For the registry to accept each proxy creation as correct and to steal the tokens, we must code an attacker contract that makes the calls and pass a few conditions:
+For the registry to accept each proxy creation as correct and to steal the tokens, we must code an attacker contract that makes the calls and passes a few conditions:
 
 1. The WalletRegistry contract must have enough DVT tokens to make the payment to the beneficiary
 
@@ -24,7 +24,7 @@ require(token.balanceOf(address(this)) >= TOKEN_PAYMENT, "Not enough funds to pa
 
 This does not directly depend on us, so we can continue.
 
-1. The caller contract must be the GnosisSafeProxyFactory contract
+2. The caller contract must be the GnosisSafeProxyFactory contract
 
 ```solidity
 require(msg.sender == walletFactory, "Caller must be factory");
